@@ -126,4 +126,21 @@ fn run(args: &Args) -> Result<(), FileReadError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_master() {
+        let args = Args::default();
+        run(&args).unwrap();
+    }
+
+    #[test]
+    fn test_empty_dir() {
+        let args = Args::empty_dir();
+        run(&args).unwrap();
+    }
+
+    fn test_empty_file() {
+        let args = Args::empty_file();
+        run(&args).unwrap();
+    }
 }

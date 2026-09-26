@@ -62,6 +62,72 @@ pub struct Args {
     
 }
 
+impl Default for Args {
+    fn default() -> Self {
+        Self { 
+            target: "hello".to_string(), 
+            directory: vec!["src".to_string()], 
+            max_count: None, 
+            whole: false, 
+            insensitive: false, 
+            recursive: false, 
+            line_numbers: false, 
+            count: false, 
+            only: false, 
+            invert: false, 
+            files_with_matches: false, 
+            files_without_matches: false, 
+            quiet: false, 
+            context: None, 
+            before_context: None, 
+            after_context: None,
+        }
+    }
+}
+
+impl Args {
+    pub fn empty_dir() -> Self {
+        Self { 
+            target: "".to_string(), 
+            directory: vec!["".to_string()], 
+            max_count: None, 
+            whole: false, 
+            insensitive: false, 
+            recursive: false, 
+            line_numbers: false, 
+            count: false, 
+            only: false, 
+            invert: false, 
+            files_with_matches: false, 
+            files_without_matches: false, 
+            quiet: false, 
+            context: None, 
+            before_context: None, 
+            after_context: None,
+        }
+    }
+    pub fn empty_file() -> Self {
+        Self { 
+            target: "".to_string(), 
+            directory: vec!["src/empty.txt".to_string()], 
+            max_count: None, 
+            whole: false, 
+            insensitive: false, 
+            recursive: false, 
+            line_numbers: false, 
+            count: false, 
+            only: false, 
+            invert: false, 
+            files_with_matches: false, 
+            files_without_matches: false, 
+            quiet: false, 
+            context: None, 
+            before_context: None, 
+            after_context: None,
+        }
+    }
+}
+
 //Grouping arguments for better readability
 #[derive(Debug, Clone, Copy)]
 pub struct PossibleArgs {
