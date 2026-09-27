@@ -47,10 +47,14 @@ pub fn find_lines_individual(
     let mut matches = Vec::new();
 
     let mut all_lines: Vec<(usize, String)> = Vec::new();
+    let mut buf = Vec::new();
 
-    //grabbing all lines from file of interest
     for (line_number, line_result) in read_lines(file)? {
-        let line = line_result?;
+        let line = match line_result {
+            Ok(valid_line) => {valid_line},
+            Err(e) if matches!(e.kind(), ErrorKind::InvalidData) => {return Ok(buf)},
+            Err(e) => {return Err(FileReadError::ReadError(e));}
+        };
 
         //pushing current line to vector, will run for every line, hence all_lines
         all_lines.push((line_number, line.clone()));

@@ -34,7 +34,7 @@ pub struct Args {
     #[arg(short, long, default_value_t = false)]
     ///Display count
     pub count: bool,
-    #[arg(short, long, default_value_t = false)]
+    #[arg(long, visible_alias = "nf", default_value_t = false)]
     ///Display count
     pub no_filename: bool,
     #[arg(short, long, default_value_t = false)]

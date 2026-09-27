@@ -58,6 +58,7 @@ fn run(args: &Args) -> Result<(), FileReadError> {
         context: context,
     };
 
+    let mut empty_checker = Vec::new();
     //iterate through pathes (multiple pathes can be given at runtime -- each will be handled)
     for path in paths {
         let result = recurse_files(path, args.recursive)?;
@@ -73,27 +74,23 @@ fn run(args: &Args) -> Result<(), FileReadError> {
                     .map(|matches| (file, matches))
             })
             .collect::<Result<HashMap<&PathBuf, Vec<(usize, String)>>, FileReadError>>()?;
-        
-        //cloning works but is potentially expensive here, think about alternative
-        let to_read = results.clone();
-    
+
+        let count_condition = args.count;
+        let quiet = args.quiet;
+        let line_numbers = args.line_numbers;
+        let no_filename = args.no_filename;
+        let all_args = count_condition || line_numbers;
+
         for (file, matches) in results {
+            let filename = file.display().to_string();
             let count = matches.len();
-            let count_condition = args.count;
-
-            let quiet = args.quiet;
-
-            let line_numbers = args.line_numbers;
-
-            let no_filename = args.no_filename;
-            
-            let all_args = count_condition || line_numbers;
             let no_matches = matches.is_empty();
 
             if !no_matches {
+                empty_checker.push(0);
                 if !quiet {
                     if !no_filename {
-                        println!("{file:?}");
+                        println!("{filename}");
                     }
                     if count_condition {
                         if line_numbers {
@@ -117,11 +114,12 @@ fn run(args: &Args) -> Result<(), FileReadError> {
                 }
             }
         }
-        //check for no matches
-        let no_matches_at_all = to_read.values().all(|x| x.is_empty());
-        if no_matches_at_all {
-            println!("0 matches found");
-        }
+    }
+    
+    //check for no matches
+    let no_matches_at_all= empty_checker.is_empty();
+    if no_matches_at_all  {
+        println!("0 matches found");
     }
 
     Ok(())
