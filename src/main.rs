@@ -73,50 +73,54 @@ fn run(args: &Args) -> Result<(), FileReadError> {
                     .map(|matches| (file, matches))
             })
             .collect::<Result<HashMap<&PathBuf, Vec<(usize, String)>>, FileReadError>>()?;
-            // dbg!(&results);
+        
+        //cloning works but is potentially expensive here, think about alternative
         let to_read = results.clone();
     
         for (file, matches) in results {
             let count = matches.len();
-            if !matches.is_empty() {
-                if args.count && args.line_numbers {
-                    println!("{file:?}");
-                    for (line_number, line) in &matches {
-                        println!("{line_number}:{line}");
+            let count_condition = args.count;
+
+            let quiet = args.quiet;
+
+            let line_numbers = args.line_numbers;
+
+            let no_filename = args.no_filename;
+            
+            let all_args = count_condition || line_numbers;
+            let no_matches = matches.is_empty();
+
+            if !no_matches {
+                if !quiet {
+                    if !no_filename {
+                        println!("{file:?}");
                     }
-                    println!("total matches: {count}");
-                } else if args.count {
-                    println!("{file:?}:{count}");
-                } else if args.count && args.files_with_matches {
-                    println!("{file:?}:{count}");
-                } else if args.files_with_matches {
-                    println!("{file:?}");
-                } if args.files_without_matches {
-                    //to pass it non-empty matches
-                } if args.quiet {
-                    //to pass it non-empty matches
-                } else {
-                    println!("{file:?}");
-                    for (line_number, line) in &matches {
-                        if args.line_numbers {
+                    if count_condition {
+                        if line_numbers {
+                            for (line_number, line) in &matches {
+                                println!("{line_number}:{line}");
+                            }
+                        }
+                        println!("{count}");
+                    }
+                    if line_numbers {
+                        for (line_number, line) in &matches {
                             println!("{line_number}:{line}");
-                        } else {
+                        }
+                    }
+
+                    if !all_args {
+                        for (_, line) in &matches {
                             println!("{line}");
                         }
                     }
                 }
-            } else {
-                if args.quiet {
-                    //do nothing
-                } else if args.files_without_matches {
-                    println!("{file:?}");
-                }
             }
         }
         //check for no matches
-        let no_matches = to_read.values().all(|x| x.is_empty());
-        if no_matches {
-            println!("No matches found");
+        let no_matches_at_all = to_read.values().all(|x| x.is_empty());
+        if no_matches_at_all {
+            println!("0 matches found");
         }
     }
 

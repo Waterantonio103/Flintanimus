@@ -35,27 +35,24 @@ pub struct Args {
     ///Display count
     pub count: bool,
     #[arg(short, long, default_value_t = false)]
+    ///Display count
+    pub no_filename: bool,
+    #[arg(short, long, default_value_t = false)]
     ///Return only matched pattern at line
     pub only: bool, //This does not YET work with CONTEXT --> REMINDER, DO THAT
     #[arg(short = 'v', long, default_value_t = false, conflicts_with = "only")]
     ///Return lines not matched
     pub invert: bool,
-    #[arg(long, default_value_t = false, conflicts_with_all = ["invert", "only", "line_numbers", "files_without_matches"])]
-    ///Return only files containing one or more matches
-    pub files_with_matches: bool,
-    #[arg(long, default_value_t = false, conflicts_with_all = ["invert", "only", "line_numbers", "count", "files_with_matches"])]
-    ///Return only files no matches
-    pub files_without_matches: bool,
-    #[arg(short, long, default_value_t = false, conflicts_with_all = ["invert", "only", "line_numbers", "count", "files_with_matches", "files_without_matches"])]
+    #[arg(short, long, default_value_t = false, conflicts_with_all = ["invert", "only", "line_numbers", "count", "no_filename"])]
     ///Print nothing if matched at least once
     pub quiet: bool,
-    #[arg(long, conflicts_with_all = ["before_context", "after_context", "files_with_matches", "files_without_matches", "only", "invert"])]
+    #[arg(long, conflicts_with_all = ["before_context", "after_context", "only", "invert"])]
     ///Lines to display before and after matched line
     pub context: Option<usize>,
-    #[arg(long, conflicts_with_all = ["context", "after_context", "files_with_matches", "files_without_matches", "only", "invert"])]
+    #[arg(long, conflicts_with_all = ["context", "after_context",  "only", "invert"])]
     ///Lines to display before matched line
     pub before_context: Option<usize>,
-    #[arg(long, conflicts_with_all = ["context", "before_context", "files_with_matches", "files_without_matches", "only", "invert"])]
+    #[arg(long, conflicts_with_all = ["context", "before_context", "only", "invert"])]
     ///Lines to display after matched line
     pub after_context: Option<usize>,
     //
@@ -73,10 +70,9 @@ impl Default for Args {
             recursive: false, 
             line_numbers: false, 
             count: false, 
+            no_filename: false,
             only: false, 
             invert: false, 
-            files_with_matches: false, 
-            files_without_matches: false, 
             quiet: false, 
             context: None, 
             before_context: None, 
@@ -96,10 +92,9 @@ impl Args {
             recursive: false, 
             line_numbers: false, 
             count: false, 
+            no_filename: false,
             only: false, 
-            invert: false, 
-            files_with_matches: false, 
-            files_without_matches: false, 
+            invert: false,  
             quiet: false, 
             context: None, 
             before_context: None, 
@@ -116,10 +111,9 @@ impl Args {
             recursive: false, 
             line_numbers: false, 
             count: false, 
+            no_filename: false,
             only: false, 
             invert: false, 
-            files_with_matches: false, 
-            files_without_matches: false, 
             quiet: false, 
             context: None, 
             before_context: None, 
