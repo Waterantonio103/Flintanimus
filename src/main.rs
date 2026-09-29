@@ -7,6 +7,8 @@ use std::path::{PathBuf};
 // use std::time::Instant;
 use std::collections::HashMap;
 use rayon::prelude::*;
+use aho_corasick::{AhoCorasick, PatternID};
+use colored::Colorize;
 
 use crate::{
     args::{Args, PossibleArgs, Context}, 
@@ -127,8 +129,19 @@ fn run(args: &Args) -> Result<(), FileReadError> {
     Ok(())
 }
 
-fn format_with_color(lines: Vec<(usize, String)>, target: &str, color: String) {
-
+fn format_with_color(lines: Vec<(usize, String)>, target: &str, color: String) -> Vec<(&usize, &String)> {
+    let mut colored_lines = Vec::new();
+    let ac = AhoCorasick::new(&[target]).unwrap();
+    for (index, (line_number, line)) in lines.iter().enumerate() {
+        for mat in ac.find_iter(&line) {
+            colored_lines.push((line_number, line));
+            let mut new_line = colored_lines[index].1;
+            let pattern = &new_line[mat.start()..mat.end()];
+            let colored_pattern = format!("{}", pattern.red());
+            new_line.replace_range(mat.start()..mat.end(), &colored_pattern);
+        }
+    }
+    colored_lines
 }
 
 #[cfg(test)]
