@@ -1,20 +1,18 @@
-#![allow(unused)]
-
 use clap::Parser;
-use std::error::Error;
-use std::fs::{self, *};
-use std::io::ErrorKind;
-use std::path::{Path, PathBuf};
-use std::io::{self, BufRead};
-use std::time::Instant;
+// use std::error::Error;
+// use std::fs::{self, *};
+// use std::io::ErrorKind;
+use std::path::{PathBuf};
+// use std::io::{self, BufRead};
+// use std::time::Instant;
 use std::collections::HashMap;
 use rayon::prelude::*;
 
 use crate::{
     args::{Args, PossibleArgs, Context}, 
-    help::help,
+    // help::help,
     filesearch::recurse_files,
-    matching::{relaxed, strict},
+    // matching::{relaxed, strict},
     fileprocessing::find_lines_individual,
     errors::FileReadError,
 };
@@ -81,13 +79,17 @@ fn run(args: &Args) -> Result<(), FileReadError> {
         let no_filename = args.no_filename;
         let all_args = count_condition || line_numbers;
 
-        for (file, matches) in results {
+        for (file, mut matches) in results {
             let filename = file.display().to_string();
             let count = matches.len();
             let no_matches = matches.is_empty();
 
             if !no_matches {
                 empty_checker.push(0);
+
+                if let Some(chosen_color) = &args.color {
+
+                }
                 if !quiet {
                     if !no_filename {
                         println!("{filename}");
@@ -125,8 +127,13 @@ fn run(args: &Args) -> Result<(), FileReadError> {
     Ok(())
 }
 
+fn format_with_color(lines: Vec<(usize, String)>, target: &str, color: String) {
+
+}
+
 #[cfg(test)]
 mod tests {
+    #![allow(unused)]
     use super::*;
 
     #[test]

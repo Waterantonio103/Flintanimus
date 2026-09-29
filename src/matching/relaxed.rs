@@ -1,4 +1,4 @@
-pub fn find_match(line: String, mut line_number: usize, target: &str, insensitive: bool, only: bool) -> Option<(usize, String)> {
+pub fn find_match(line: String, line_number: usize, target: &str, insensitive: bool, only: bool) -> Option<(usize, String)> {
     //Purpose : find target pattern without caring about boundaries (search for "abc" in "abc", "babc" -> "abc", "babc")
     let target_lower = target.to_ascii_lowercase();
     let line_lower = &line.to_ascii_lowercase();
@@ -27,7 +27,7 @@ pub fn find_match(line: String, mut line_number: usize, target: &str, insensitiv
     }
 }
 
-pub fn not_matched(line: String, mut line_number: usize, target: &str, insensitive: bool) -> Option<(usize, String)> {
+pub fn not_matched(line: String, line_number: usize, target: &str, insensitive: bool) -> Option<(usize, String)> {
     //Purpose : similar to find_match, but return only lines where NO target pattern was found (invert)
     let target_lower = target.to_ascii_lowercase();
     let line_lower = &line.to_ascii_lowercase();

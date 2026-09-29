@@ -1,8 +1,8 @@
-use std::io;
 
 use thiserror::Error;
 
 //custom error types describing potential errors encountered at runtime
+#[allow(dead_code)]
 #[derive(Debug, Error)]
 pub enum FileReadError {
     #[error("error reading file: {0}")]

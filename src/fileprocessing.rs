@@ -1,10 +1,10 @@
-use std::error::Error;
-use std::fs::{self, *};
+// use std::error::Error;
+use std::fs::*;
 use std::io::ErrorKind;
-use std::ops::Deref;
+// use std::ops::Deref;
 use std::path::{Path, PathBuf};
 use std::io::{self, BufRead};
-use std::collections::HashMap;
+// use std::collections::HashMap;
 use std::usize;
 
 use crate::args::{PossibleArgs ,Context};
@@ -47,7 +47,7 @@ pub fn find_lines_individual(
     let mut matches = Vec::new();
 
     let mut all_lines: Vec<(usize, String)> = Vec::new();
-    let mut buf = Vec::new();
+    let buf = Vec::new();
 
     for (line_number, line_result) in read_lines(file)? {
         let line = match line_result {
@@ -112,7 +112,7 @@ fn read_lines<P>(filename: P) -> io::Result<impl Iterator<Item = (usize, io::Res
 where P: AsRef<Path>, {
     //Purpose : read all lines from a file and return an iterator over them (String)
     let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines().enumerate().map(|(mut line_number, line)| {(line_number + 1, line)}))
+    Ok(io::BufReader::new(file).lines().enumerate().map(|(line_number, line)| {(line_number + 1, line)}))
 }
 
 fn retrieve(matches: &Vec<(usize, String)>, all_lines: &Vec<(usize, String)>, lower: usize, upper: usize) -> Result<Vec<std::ops::Range<usize>>, FileReadError> {

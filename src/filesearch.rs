@@ -1,4 +1,4 @@
-use std::fs::{self, *};
+use std::fs::*;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 

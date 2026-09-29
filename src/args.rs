@@ -1,4 +1,6 @@
-use clap::Parser;
+#![allow(unused)]
+
+use clap::{Parser, builder::Str};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -46,6 +48,9 @@ pub struct Args {
     #[arg(short, long, default_value_t = false, conflicts_with_all = ["invert", "only", "line_numbers", "count", "no_filename"])]
     ///Print nothing if matched at least once
     pub quiet: bool,
+    #[arg(long, visible_alias = "cl")]
+    ///Highlight pattern with desired color
+    pub color: Option<String>,
     #[arg(long, conflicts_with_all = ["before_context", "after_context", "only", "invert"])]
     ///Lines to display before and after matched line
     pub context: Option<usize>,
@@ -74,6 +79,7 @@ impl Default for Args {
             only: false, 
             invert: false, 
             quiet: false, 
+            color: None,
             context: None, 
             before_context: None, 
             after_context: None,
@@ -96,6 +102,7 @@ impl Args {
             only: false, 
             invert: false,  
             quiet: false, 
+            color: None,
             context: None, 
             before_context: None, 
             after_context: None,
@@ -115,6 +122,7 @@ impl Args {
             only: false, 
             invert: false, 
             quiet: false, 
+            color: None,
             context: None, 
             before_context: None, 
             after_context: None,

@@ -1,6 +1,6 @@
 use regex::Regex;
 
-pub fn find_match_strict(line: String, mut line_number: usize, target: &str, insensitive: bool, only: bool) -> Option<(usize, String)> {
+pub fn find_match_strict(line: String, line_number: usize, target: &str, insensitive: bool, only: bool) -> Option<(usize, String)> {
     //Purpose : find target pattern strictly, with bounds
     let strict = format!(r"\b{}\b", target);
     //to handle uppercase and lowercase differences
@@ -43,7 +43,7 @@ pub fn find_match_strict(line: String, mut line_number: usize, target: &str, ins
     }
 }
 
-pub fn not_matched_strict(line: String, mut line_number: usize, target: &str, insensitive: bool) -> Option<(usize, String)> {
+pub fn not_matched_strict(line: String, line_number: usize, target: &str, insensitive: bool) -> Option<(usize, String)> {
     //Purpose : works similarly to find_match_strict, however returns line and line number only if the target was NOT found (invert)
     let strict = format!(r"\b{}\b", target);
     if insensitive {
