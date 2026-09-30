@@ -90,8 +90,12 @@ fn run(args: &Args) -> Result<(), FileReadError> {
                 empty_checker.push(0);
 
                 if let Some(chosen_color) = &args.color {
-
+                    matches.clear();
+                    matches = format_with_color(matches, target, chosen_color);
+                    dbg!(&matches);
                 }
+                dbg!(&matches);
+
                 if !quiet {
                     if !no_filename {
                         println!("{filename}");
@@ -129,18 +133,21 @@ fn run(args: &Args) -> Result<(), FileReadError> {
     Ok(())
 }
 
-fn format_with_color(lines: Vec<(usize, String)>, target: &str, color: String) -> Vec<(&usize, &String)> {
+fn format_with_color(lines: Vec<(usize, String)>, target: &str, color: &String) -> Vec<(usize, String)> {
     let mut colored_lines = Vec::new();
     let ac = AhoCorasick::new(&[target]).unwrap();
-    for (index, (line_number, line)) in lines.iter().enumerate() {
+    // dbg!(&ac);
+    for (index, (line_number, line)) in lines.into_iter().enumerate() {
         for mat in ac.find_iter(&line) {
-            colored_lines.push((line_number, line));
-            let mut new_line = colored_lines[index].1;
+            dbg!(&line);
+            colored_lines.push((line_number, line.clone()));
+            let new_line = &mut colored_lines[index].1;
             let pattern = &new_line[mat.start()..mat.end()];
             let colored_pattern = format!("{}", pattern.red());
             new_line.replace_range(mat.start()..mat.end(), &colored_pattern);
         }
     }
+    dbg!(&colored_lines);
     colored_lines
 }
 
