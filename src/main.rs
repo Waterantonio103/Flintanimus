@@ -8,7 +8,7 @@ use std::path::{PathBuf};
 use std::collections::HashMap;
 use rayon::prelude::*;
 use aho_corasick::{AhoCorasick, PatternID};
-use colored::Colorize;
+use colored::{Colorize, Color};
 
 use crate::{
     args::{Args, PossibleArgs, Context}, 
@@ -90,11 +90,23 @@ fn run(args: &Args) -> Result<(), FileReadError> {
                 empty_checker.push(0);
 
                 if let Some(chosen_color) = &args.color {
+                    let color = match chosen_color {
+                        0 => {Color::Red},
+                        1 => {Color::Green},
+                        2 => {Color::Blue},
+                        3 => {Color::Cyan},
+                        4 => {Color::Magenta},
+                        5 => {Color::Yellow},
+                        6 => {Color::Black},
+                        7 => {Color::White},
+                        _ => {Color::White},
+                    };
+                    let new_matches = format_with_color(matches.clone(), target, color);
                     matches.clear();
-                    matches = format_with_color(matches, target, chosen_color);
-                    dbg!(&matches);
+                    for line in new_matches {
+                        matches.push(line);
+                    }
                 }
-                dbg!(&matches);
 
                 if !quiet {
                     if !no_filename {
@@ -133,21 +145,19 @@ fn run(args: &Args) -> Result<(), FileReadError> {
     Ok(())
 }
 
-fn format_with_color(lines: Vec<(usize, String)>, target: &str, color: &String) -> Vec<(usize, String)> {
+fn format_with_color(lines: Vec<(usize, String)>, target: &str, color: Color) -> Vec<(usize, String)> {
     let mut colored_lines = Vec::new();
     let ac = AhoCorasick::new(&[target]).unwrap();
     // dbg!(&ac);
     for (index, (line_number, line)) in lines.into_iter().enumerate() {
         for mat in ac.find_iter(&line) {
-            dbg!(&line);
             colored_lines.push((line_number, line.clone()));
             let new_line = &mut colored_lines[index].1;
             let pattern = &new_line[mat.start()..mat.end()];
-            let colored_pattern = format!("{}", pattern.red());
+            let colored_pattern = format!("{}", pattern.color(color));
             new_line.replace_range(mat.start()..mat.end(), &colored_pattern);
         }
     }
-    dbg!(&colored_lines);
     colored_lines
 }
 

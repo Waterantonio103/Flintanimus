@@ -48,9 +48,9 @@ pub struct Args {
     #[arg(short, long, default_value_t = false, conflicts_with_all = ["invert", "only", "line_numbers", "count", "no_filename"])]
     ///Print nothing if matched at least once
     pub quiet: bool,
-    #[arg(long, visible_alias = "cl")]
-    ///Highlight pattern with desired color
-    pub color: Option<String>,
+    #[arg(short = 'C', long, visible_alias = "cl")]
+    ///Highlight pattern with desired color (0-7 | 0:r , 1:g , 2:b , 3:c , 4:m , 5:y , 6:b , 7:w)
+    pub color: Option<u8>,
     #[arg(long, conflicts_with_all = ["before_context", "after_context", "only", "invert"])]
     ///Lines to display before and after matched line
     pub context: Option<usize>,
