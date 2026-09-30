@@ -1,13 +1,8 @@
 use clap::Parser;
-// use std::error::Error;
-// use std::fs::{self, *};
-// use std::io::ErrorKind;
 use std::path::{PathBuf};
-// use std::io::{self, BufRead};
-// use std::time::Instant;
 use std::collections::HashMap;
 use rayon::prelude::*;
-use aho_corasick::{AhoCorasick, PatternID};
+use aho_corasick::AhoCorasick;
 use colored::{Colorize, Color};
 
 use crate::{
@@ -101,7 +96,7 @@ fn run(args: &Args) -> Result<(), FileReadError> {
                         7 => {Color::White},
                         _ => {Color::White},
                     };
-                    let new_matches = format_with_color(matches.clone(), target, color);
+                    let new_matches = format_with_color(matches.clone(), target, color, args.insensitive);
                     matches.clear();
                     for line in new_matches {
                         matches.push(line);
@@ -145,17 +140,30 @@ fn run(args: &Args) -> Result<(), FileReadError> {
     Ok(())
 }
 
-fn format_with_color(lines: Vec<(usize, String)>, target: &str, color: Color) -> Vec<(usize, String)> {
+fn format_with_color(lines: Vec<(usize, String)>, target: &str, color: Color, insensitive: bool) -> Vec<(usize, String)> {
+    //Purpose : format every pattern with selected color
+    let target = &[target];
+    //aho-corasick algo
     let mut colored_lines = Vec::new();
-    let ac = AhoCorasick::new(&[target]).unwrap();
-    // dbg!(&ac);
+    let ac = if insensitive {
+        AhoCorasick::builder()
+        .ascii_case_insensitive(true)
+        .build(target)
+        .unwrap()
+    } else {
+        AhoCorasick::new(target).unwrap()
+    };
     for (index, (line_number, line)) in lines.into_iter().enumerate() {
-        for mat in ac.find_iter(&line) {
-            colored_lines.push((line_number, line.clone()));
-            let new_line = &mut colored_lines[index].1;
-            let pattern = &new_line[mat.start()..mat.end()];
+        //collect all pattern byte indexes
+        let matches : Vec<_> = ac.find_iter(&line).map(|m| m.range()).collect();
+        colored_lines.push((line_number, line.clone()));
+        let new_line = &mut colored_lines[index].1;
+        //reverse iterator because using a color changes byte indexes (weird [Xm\ stuff added to String), therefore going in order will mean replacing newly incorrect ranges
+        for range in matches.into_iter().rev() {
+            //grab pattern from the right, format it with color and replace old pattern with newly colored pattern
+            let pattern = &new_line[range.clone()];
             let colored_pattern = format!("{}", pattern.color(color));
-            new_line.replace_range(mat.start()..mat.end(), &colored_pattern);
+            new_line.replace_range(range, &colored_pattern);
         }
     }
     colored_lines

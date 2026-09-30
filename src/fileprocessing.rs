@@ -1,10 +1,7 @@
-// use std::error::Error;
 use std::fs::*;
 use std::io::ErrorKind;
-// use std::ops::Deref;
 use std::path::{Path, PathBuf};
 use std::io::{self, BufRead};
-// use std::collections::HashMap;
 use std::usize;
 
 use crate::args::{PossibleArgs ,Context};
